@@ -234,7 +234,7 @@ localStorage.setItem(`danva_results_${participantId}_${session}`, JSON.stringify
                     type: htmlKeyboardResponse,
                     stimulus: `<img src="${trialDict[trialIndex].stimFile}" id="current-stimulus">`,
                     choices: "NO_KEYS",
-                    trial_duration: 10,
+                    trial_duration: 2000,
                     on_load: function() {
                         currentTrialIndex = trialIndex;
                         trialStartTime = performance.now();
