@@ -103,7 +103,7 @@
   <h2>Misattribution Errors</h2>
   <table>
     <tr>
-      <th>Should Have Been ↓<br>Called It →</th>
+      <th>You Called It →<br>Should Have Been ↓</th>
       <th>Happy</th>
       <th>Sad</th>
       <th>Angry</th>
@@ -266,7 +266,7 @@
     window.barChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Total Errors (0–24 scale)'],
+        labels: [''],
         datasets: [
           { label: 'Happy', data: [happyErrors], backgroundColor: '#00FF00' },
           { label: 'Sad', data: [sadErrors], backgroundColor: '#0000FF' },
@@ -279,7 +279,7 @@
         responsive: true,
         plugins: {
           legend: { display: true, position: 'bottom' },
-          title: { display: true, text: 'Total Errors by Emotion (Stacked, includes Skipped)' }
+          title: { display: true, text: 'Total Errors by Emotion (Includes Skipped)' }
         },
         scales: {
           x: { stacked: true, min: 0, max: 24, ticks: { stepSize: 2 }, title: { display: true, text: 'Error Count' } },

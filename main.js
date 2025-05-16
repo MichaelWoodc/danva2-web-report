@@ -24,7 +24,7 @@ async function runScoring() {
     window.barChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Total Errors (0–24 scale)'],
+        labels: [''],
         datasets: [
           {
             label: 'Happy',
@@ -58,7 +58,7 @@ async function runScoring() {
           },
           title: {
             display: true,
-            text: 'Total Errors by Emotion (Stacked, includes Skipped)'
+            text: 'Total Errors by Emotion (Includes Skipped)'
           }
         },
         scales: {
