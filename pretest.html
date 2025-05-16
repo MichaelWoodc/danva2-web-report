@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DANVA II Pre-Test Check</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      padding: 2em;
+      text-align: center;
+    }
+    .box {
+      background: white;
+      border: 1px solid #ccc;
+      padding: 2em;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 8px;
+    }
+    button {
+      font-size: 1.1em;
+      padding: 0.5em 1.5em;
+      margin-top: 1em;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    #status {
+      margin-top: 1em;
+      padding: 0.5em;
+      border-radius: 4px;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Before You Begin</h1>
+    <p>This test requires access to <strong>cookies</strong> and <strong>local storage</strong> in your browser to save your results.</p>
+    <p>Please click the button below to confirm permission.</p>
+    <button onclick="checkPermissions()">Check and Continue</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    function checkPermissions() {
+      const statusEl = document.getElementById("status");
+      statusEl.innerHTML = "";
+      
+      try {
+        // Test localStorage
+        localStorage.setItem("danva_test_check", "ok");
+        const val = localStorage.getItem("danva_test_check");
+        if (val !== "ok") throw new Error("Local storage failed");
+        localStorage.removeItem("danva_test_check");
+        
+        // Test cookies
+        document.cookie = "danva_cookie_check=1; path=/; max-age=60"; // 1 minute expiry
+        if (!document.cookie.includes("danva_cookie_check=1")) {
+          throw new Error("Cookies disabled");
+        }
+        
+        // Clear test cookie
+        document.cookie = "danva_cookie_check=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        
+        // Show success message briefly before redirect
+        statusEl.innerHTML = '<span class="success">✓ All checks passed. Redirecting...</span>';
+        setTimeout(() => {
+          window.location.href = "danva.html";
+        }, 1000);
+        
+      } catch (e) {
+        statusEl.innerHTML = `<span class="error">❌ Permission check failed: ${e.message}<br><br>
+          Please enable:<br>
+          - Local storage<br>
+          - Cookies<br>
+          Then reload this page.</span>`;
+      }
+    }
+  </script>
+</body>
+</html>

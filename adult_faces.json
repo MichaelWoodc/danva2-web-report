@@ -1,0 +1,146 @@
+[
+    {
+        "stimFile": "src/stimFiles/adultFaces/1.jpg",
+        "correctAnswer": 1,
+        "intensity": 2,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/2.jpg",
+        "correctAnswer": 4,
+        "intensity": 1,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/3.jpg",
+        "correctAnswer": 3,
+        "intensity": 2,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/4.jpg",
+        "correctAnswer": 1,
+        "intensity": 1,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/5.jpg",
+        "correctAnswer": 3,
+        "intensity": 1,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/6.jpg",
+        "correctAnswer": 2,
+        "intensity": 2,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/7.jpg",
+        "correctAnswer": 1,
+        "intensity": 1,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/8.jpg",
+        "correctAnswer": 4,
+        "intensity": 1,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/9.jpg",
+        "correctAnswer": 4,
+        "intensity": 2,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/10.jpg",
+        "correctAnswer": 1,
+        "intensity": 1,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/11.jpg",
+        "correctAnswer": 2,
+        "intensity": 2,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/12.jpg",
+        "correctAnswer": 3,
+        "intensity": 1,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/13.jpg",
+        "correctAnswer": 2,
+        "intensity": 1,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/14.jpg",
+        "correctAnswer": 2,
+        "intensity": 1,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/15.jpg",
+        "correctAnswer": 3,
+        "intensity": 2,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/16.jpg",
+        "correctAnswer": 4,
+        "intensity": 1,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/17.jpg",
+        "correctAnswer": 2,
+        "intensity": 1,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/18.jpg",
+        "correctAnswer": 2,
+        "intensity": 2,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/19.jpg",
+        "correctAnswer": 4,
+        "intensity": 2,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/20.jpg",
+        "correctAnswer": 3,
+        "intensity": 1,
+        "stimuliGender": 1
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/21.jpg",
+        "correctAnswer": 4,
+        "intensity": 2,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/22.jpg",
+        "correctAnswer": 3,
+        "intensity": 2,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/23.jpg",
+        "correctAnswer": 1,
+        "intensity": 2,
+        "stimuliGender": 2
+    },
+    {
+        "stimFile": "src/stimFiles/adultFaces/24.jpg",
+        "correctAnswer": 1,
+        "intensity": 2,
+        "stimuliGender": 2
+    }
+]

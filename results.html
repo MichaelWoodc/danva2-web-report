@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DANVA2 Scoring Results</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+    .section {
+      margin-top: 40px;
+    }
+    #errorBarChart {
+      margin: 30px auto;
+      max-width: 800px;
+    }
+  </style>
+</head>
+<body>
+
+<div style="margin-bottom: 20px;">
+  <label for="sessionSelector"><strong>Select Saved Session:</strong></label>
+  <select id="sessionSelector"></select>
+  <button onclick="loadSession()">Load</button>
+</div>
+
+<h1>DANVA2 Scoring Results</h1>
+
+<div class="section">
+  <table>
+    <tr><th>DANVA Subtest</th><th>Client ID</th><th>Age</th></tr>
+    <tr><td id="danvasubtest"></td><td id="participant"></td><td id="age"></td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <table>
+    <tr><th>Errors by Skipped Answers</th><th>Errors by Misjudgment</th><th>Total Errors</th></tr>
+    <tr><td id="skippedErrors"></td><td id="errorsByMisjudgement"></td><td id="totalerrors"></td></tr>
+  </table>
+  <canvas id="errorBarChart" width="800" height="150"></canvas>
+</div>
+
+<div class="section">
+  <h2>Total Errors by Emotion Type and Intensity</h2>
+  <table>
+    <tr>
+      <th></th>
+      <th>Happy</th>
+      <th>Sad</th>
+      <th>Angry</th>
+      <th>Fearful</th>
+      <th>Total</th>
+    </tr>
+    <tr>
+      <th>High</th>
+      <td id="happyHighIntensityErrors"></td>
+      <td id="sadHighIntensityErrors"></td>
+      <td id="angryHighIntensityErrors"></td>
+      <td id="fearfulHighIntensityErrors"></td>
+      <td id="highIntensityErrors"></td>
+    </tr>
+    <tr>
+      <th>Low</th>
+      <td id="happyLowIntensityErrors"></td>
+      <td id="sadLowIntensityErrors"></td>
+      <td id="angryLowIntensityErrors"></td>
+      <td id="fearfulLowIntensityErrors"></td>
+      <td id="lowIntensityErrors"></td>
+    </tr>
+    <tr>
+      <th>Total</th>
+      <td id="happyErrors"></td>
+      <td id="sadErrors"></td>
+      <td id="angryErrors"></td>
+      <td id="fearfulErrors"></td>
+      <td></td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Misattribution Errors</h2>
+  <table>
+    <tr>
+      <th>Should Have Been ↓<br>Called It →</th>
+      <th>Happy</th>
+      <th>Sad</th>
+      <th>Angry</th>
+      <th>Fearful</th>
+    </tr>
+    <tr>
+      <th>Happy</th>
+      <td></td>
+      <td id="misattributedHappySad"></td>
+      <td id="misattributedHappyAngry"></td>
+      <td id="misattributedHappyFearful"></td>
+    </tr>
+    <tr>
+      <th>Sad</th>
+      <td id="misattributedSadHappy"></td>
+      <td></td>
+      <td id="misattributedSadAngry"></td>
+      <td id="misattributedSadFearful"></td>
+    </tr>
+    <tr>
+      <th>Angry</th>
+      <td id="misattributedAngryHappy"></td>
+      <td id="misattributedAngrySad"></td>
+      <td></td>
+      <td id="misattributedAngryFearful"></td>
+    </tr>
+    <tr>
+      <th>Fearful</th>
+      <td id="misattributedFearfulHappy"></td>
+      <td id="misattributedFearfulSad"></td>
+      <td id="misattributedFearfulAngry"></td>
+      <td></td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Errors by Emotion Type and Gender</h2>
+  <table>
+    <tr>
+      <th></th>
+      <th>Happy</th>
+      <th>Sad</th>
+      <th>Angry</th>
+      <th>Fearful</th>
+      <th>Total</th>
+    </tr>
+    <tr>
+      <th>Male</th>
+      <td id="maleHappyErrors"></td>
+      <td id="maleSadErrors"></td>
+      <td id="maleAngryErrors"></td>
+      <td id="maleFearfulErrors"></td>
+      <td id="maleTotalErrors"></td>
+    </tr>
+    <tr>
+      <th>Female</th>
+      <td id="femaleHappyErrors"></td>
+      <td id="femaleSadErrors"></td>
+      <td id="femaleAngryErrors"></td>
+      <td id="femaleFearfulErrors"></td>
+      <td id="femaleTotalErrors"></td>
+    </tr>
+    <!-- <tr>
+      <th>Total</th>
+      <td id="genderTotalHappy"></td>
+      <td id="genderTotalSad"></td>
+      <td id="genderTotalAngry"></td>
+      <td id="genderTotalFearful"></td>
+      <td id="genderGrandTotal"></td>
+    </tr> -->
+  </table>
+</div>
+
+<div class="section">
+  <h2>Stimulus-Level Response Details</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Stimulus</th>
+        <th>Correct Answer (w/ Intensity & Gender)</th>
+        <th>Your Incorrect Answer</th>
+      </tr>
+    </thead>
+    <tbody id="stimulus-details"></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2" style="text-align: right; font-weight: bold;">Total Incorrect:</td>
+        <td id="stimulusIncorrectTotal"></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<script>
+  // Define computeScoring function
+  window.computeScoring = function(trials) {
+    const results = {};
+    const fields = [
+      "happyHighIntensityErrors", "happyLowIntensityErrors", "sadHighIntensityErrors", "sadLowIntensityErrors",
+      "angryHighIntensityErrors", "angryLowIntensityErrors", "fearfulHighIntensityErrors", "fearfulLowIntensityErrors",
+      "happyErrors", "sadErrors", "angryErrors", "fearfulErrors",
+      "highIntensityErrors", "lowIntensityErrors", "totalerrors", "skippedErrors", "errorsByMisjudgement",
+      "misattributedHappySad", "misattributedHappyAngry", "misattributedHappyFearful",
+      "misattributedSadHappy", "misattributedSadAngry", "misattributedSadFearful",
+      "misattributedAngryHappy", "misattributedAngrySad", "misattributedAngryFearful",
+      "misattributedFearfulHappy", "misattributedFearfulSad", "misattributedFearfulAngry",
+      "maleHappyErrors", "maleSadErrors", "maleAngryErrors", "maleFearfulErrors", "maleTotalErrors",
+      "femaleHappyErrors", "femaleSadErrors", "femaleAngryErrors", "femaleFearfulErrors", "femaleTotalErrors"
+    ];
+    
+    fields.forEach(f => results[f] = 0);
+    
+    const emotionMap = { 1: "Happy", 2: "Sad", 3: "Angry", 4: "Fearful" };
+    const genderMap = { 1: "Female", 2: "Male" };
+    
+    trials.forEach(trial => {
+      const correct = emotionMap[trial.correctAnswer];
+      const response = trial.response === "0" ? "Skipped" : emotionMap[trial.response];
+      const isSkipped = trial.response === "0";
+      const isIncorrect = !isSkipped && response !== correct;
+      
+      if (isIncorrect) {
+        results.totalerrors++;
+        results.errorsByMisjudgement++;
+        results[`${correct.toLowerCase()}Errors`]++;
+        
+        const intensityKey = trial.intensity === 1 ? 'Low' : 'High';
+        results[`${correct.toLowerCase()}${intensityKey}IntensityErrors`]++;
+        results[`${intensityKey.toLowerCase()}IntensityErrors`]++;
+        
+        const genderKey = trial.stimuliGender === 1 ? 'female' : 'male';
+        results[`${genderKey}${correct}Errors`]++;
+        results[`${genderKey}TotalErrors`]++;
+        
+        if (trial.response !== '0') {
+          results[`misattributed${correct}${response}`]++;
+        }
+      } else if (isSkipped) {
+        results.skippedErrors++;
+        results.totalerrors++;
+        results[`${correct.toLowerCase()}Errors`]++; // Add skipped to the emotion's error count
+      }
+    });
+    
+    return results;
+  };
+  
+  function createErrorBarChart() {
+    const ctx = document.getElementById('errorBarChart')?.getContext('2d');
+    if (!ctx) return;
+    
+    if (window.barChart) window.barChart.destroy();
+    
+    const happyErrors = parseInt(document.getElementById('happyErrors').textContent) || 0;
+    const sadErrors = parseInt(document.getElementById('sadErrors').textContent) || 0;
+    const angryErrors = parseInt(document.getElementById('angryErrors').textContent) || 0;
+    const fearfulErrors = parseInt(document.getElementById('fearfulErrors').textContent) || 0;
+    
+    window.barChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Total Errors (0–24 scale)'],
+        datasets: [
+          { label: 'Happy', data: [happyErrors], backgroundColor: '#00FF00' },
+          { label: 'Sad', data: [sadErrors], backgroundColor: '#0000FF' },
+          { label: 'Angry', data: [angryErrors], backgroundColor: '#FF0000' },
+          { label: 'Fearful', data: [fearfulErrors], backgroundColor: '#FFFF00' }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: true, position: 'bottom' },
+          title: { display: true, text: 'Total Errors by Emotion (Stacked, includes Skipped)' }
+        },
+        scales: {
+          x: { stacked: true, min: 0, max: 24, ticks: { stepSize: 2 }, title: { display: true, text: 'Error Count' } },
+          y: { stacked: true }
+        }
+      }
+    });
+  }
+  
+  function loadSession() {
+    const key = document.getElementById("sessionSelector").value;
+    const record = localStorage.getItem(key);
+    if (!record) return alert("No data for selected session");
+  
+    const parsed = JSON.parse(record);
+    
+    // Update basic info first
+    document.getElementById("participant").textContent = parsed.participantId || "";
+    document.getElementById("age").textContent = parsed.age || "";
+    document.getElementById("danvasubtest").textContent = parsed.testVersion || "";
+    
+    // Process scoring data
+    fetch('adult_faces.json')
+      .then(res => res.json())
+      .then(data => {
+        const trials = data.map((item, index) => ({
+          correctAnswer: item.correctAnswer,
+          response: parsed.trialData[index]?.response ?? "0",
+          intensity: item.intensity,
+          stimuliGender: item.stimuliGender
+        }));
+  
+        const results = window.computeScoring(trials);
+  
+        // Update all results
+        const resultsToFill = [
+          "skippedErrors", "errorsByMisjudgement", "totalerrors",
+          "happyHighIntensityErrors", "sadHighIntensityErrors", "angryHighIntensityErrors", "fearfulHighIntensityErrors", "highIntensityErrors",
+          "happyLowIntensityErrors", "sadLowIntensityErrors", "angryLowIntensityErrors", "fearfulLowIntensityErrors", "lowIntensityErrors",
+          "happyErrors", "sadErrors", "angryErrors", "fearfulErrors",
+          "misattributedHappySad", "misattributedHappyAngry", "misattributedHappyFearful",
+          "misattributedSadHappy", "misattributedSadAngry", "misattributedSadFearful",
+          "misattributedAngryHappy", "misattributedAngrySad", "misattributedAngryFearful",
+          "misattributedFearfulHappy", "misattributedFearfulSad", "misattributedFearfulAngry",
+          "maleHappyErrors", "maleSadErrors", "maleAngryErrors", "maleFearfulErrors", "maleTotalErrors",
+          "femaleHappyErrors", "femaleSadErrors", "femaleAngryErrors", "femaleFearfulErrors", "femaleTotalErrors"
+        ];
+        
+        resultsToFill.forEach(field => {
+          const el = document.getElementById(field);
+          if (el) el.textContent = results[field] ?? '';
+        });
+  
+        // Update stimulus details
+        const emotionMap = { 1: "Happy", 2: "Sad", 3: "Angry", 4: "Fearful" };
+        const genderMap = { 1: "Female", 2: "Male" };
+        const tableBody = document.getElementById("stimulus-details");
+        tableBody.innerHTML = "";
+  
+        let incorrectCount = 0;
+        data.forEach((item, i) => {
+          const correct = emotionMap[item.correctAnswer];
+          const response = parsed.trialData[i]?.response != null ? emotionMap[parsed.trialData[i].response] : "0";
+          const incorrect = response !== correct && response !== "0" ? response : (response === "0" ? "Skipped" : '');
+  
+          if (incorrect) incorrectCount++;
+  
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${item.stimFile.split("/").pop()}</td>
+            <td>${correct} (${item.intensity === 1 ? 'Low' : 'High'} Intensity, ${genderMap[item.stimuliGender]})</td>
+            <td>${incorrect}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+  
+        document.getElementById("stimulusIncorrectTotal").textContent = incorrectCount;
+        
+        createErrorBarChart();
+      });
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const selector = document.getElementById("sessionSelector");
+    const records = [];
+  
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith("danva_results")) {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          const label = (data.participantId || "Unknown") + " – " + (new Date(data.date).toLocaleString());
+          records.push({ key, label, date: new Date(data.date) });
+        } catch (e) {}
+      }
+    }
+  
+    records.sort((a, b) => b.date - a.date);
+    records.forEach(record => {
+      const option = document.createElement("option");
+      option.value = record.key;
+      option.textContent = record.label;
+      selector.appendChild(option);
+    });
+  
+    if (records.length > 0) {
+      selector.selectedIndex = 0;
+      loadSession();
+    }
+  });
+  </script>
+
+</body>
+</html>

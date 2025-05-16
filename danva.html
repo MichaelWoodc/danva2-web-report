@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DANVA II Emotion Recognition Test</title>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .hide-cursor {
+            cursor: none !important;
+        }
+        
+        .jspsych-btn {
+            cursor: pointer !important;
+        }
+
+        .jspsych-display-element {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
+        .fixation-cross {
+            font-size: 60px;
+            color: white;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #current-stimulus {
+            max-width: 50vw;
+            max-height: 50vh;
+            display: block;
+            margin: 0 auto;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+        
+        .jspsych-content {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        
+        .jspsych-btn {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 15px 25px;
+            margin: 0;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .jspsych-btn:hover {
+            background-color: #444;
+        }
+        
+        .consent-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 420px;
+        }
+        
+        .button-grid button {
+            width: 100%;
+        }
+        
+        .skip-btn-container {
+            grid-column: span 2;
+            margin-top: 10px;
+        }
+        
+        .skip-btn {
+            width: 100%;
+        }
+        
+        .happy-btn { background-color: #2d572c; }
+        .sad-btn { background-color: #3a5c9a; }
+        .angry-btn { background-color: #8a2a2a; }
+        .fearful-btn { background-color: #6d3d6d; }
+        
+        .jspsych-btn-continue {
+            display: block;
+            margin: 20px auto 0;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Initialize plugins
+        const htmlKeyboardResponse = jsPsychHtmlKeyboardResponse;
+        const surveyText = jsPsychSurveyText;
+        const preload = jsPsychPreload;
+
+        // Correct answers
+        const correctAnswers = {
+            "1.jpg": "1", "2.jpg": "4", "3.jpg": "3", "4.jpg": "1", 
+            "5.jpg": "3", "6.jpg": "2", "7.jpg": "1", "8.jpg": "4", 
+            "9.jpg": "4", "10.jpg": "1", "11.jpg": "2", "12.jpg": "3", 
+            "13.jpg": "2", "14.jpg": "2", "15.jpg": "3", "16.jpg": "4", 
+            "17.jpg": "2", "18.jpg": "2", "19.jpg": "4", "20.jpg": "3", 
+            "21.jpg": "4", "22.jpg": "3", "23.jpg": "1", "24.jpg": "1"
+        };
+
+        // Generate participant ID
+        function generateParticipantId() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Download data
+        function downloadData(data) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `DANVA_${data.participantId}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+// Ask for localStorage/cookie access before starting
+try {
+  localStorage.setItem('danva_test_check', '1');
+  localStorage.removeItem('danva_test_check');
+} catch (e) {
+  alert("This test requires access to local storage and cookies to save your results. Please enable them and reload the page.");
+  throw new Error("Local storage permission denied.");
+}
+
+            const jsPsych = initJsPsych({
+                on_finish: function() {
+                    const completeData = {
+                        participantId: participantId,
+                        age: age,
+                        session: session,
+                        date: new Date().toISOString(),
+                        trialData: trialDict,
+                        testVersion: currentTest,
+                        comments: comments
+                    };
+                    downloadData(completeData);
+
+localStorage.setItem(`danva_results_${participantId}_${session}`, JSON.stringify({
+  participantId,
+  age,
+  session,
+  date: new Date().toISOString(),
+  trialData: trialDict,
+  testVersion: currentTest,
+  comments
+}));
+        // Redirect to results.html after a short delay
+        setTimeout(function() {
+            window.location.href = "results.html";
+        }, 2000); // 2 second delay before redirect
+
+                }
+            });
+
+            // Experiment variables
+            let trialDict = {};
+            let currentTest = 'Adult Faces';
+            let participantId = generateParticipantId();
+            let age = '';
+            let session = '001';
+            let comments = '';
+            let currentTrialIndex = 0;
+            let trialStartTime;
+
+            // Initialize stimuli
+            function initializeStimuli() {
+                trialDict = {};
+                const imageUrls = [];
+                for (let i = 1; i <= 24; i++) {
+                    const filename = `${i}.jpg`;
+                    const url = `stimFiles/adultFaces/${filename}`;
+                    imageUrls.push(url);
+                    trialDict[i-1] = {
+                        stimFile: url,
+                        correctAnswer: correctAnswers[filename],
+                        response: null,
+                        rt: null,
+                        timestamp: null
+                    };
+                }
+                return imageUrls;
+            }
+
+            // Create image display trial
+            function createImageDisplayTrial(trialIndex) {
+                return {
+                    type: htmlKeyboardResponse,
+                    stimulus: `<img src="${trialDict[trialIndex].stimFile}" id="current-stimulus">`,
+                    choices: "NO_KEYS",
+                    trial_duration: 10,
+                    on_load: function() {
+                        currentTrialIndex = trialIndex;
+                        trialStartTime = performance.now();
+                        document.body.classList.add('hide-cursor');
+                        
+                        // Make image visible when loaded
+                        const img = document.getElementById('current-stimulus');
+                        if (img.complete) {
+                            img.style.opacity = '1';
+                        } else {
+                            img.onload = function() {
+                                this.style.opacity = '1';
+                            };
+                        }
+                    },
+                    on_finish: function() {
+                        document.body.classList.remove('hide-cursor');
+                    }
+                };
+            }
+
+            // Create response trial
+            function createResponseTrial(trialIndex) {
+                return {
+                    type: htmlKeyboardResponse,
+                    stimulus: `
+                        <div class="button-container">
+                            <div class="button-grid">
+                                <button class="jspsych-btn happy-btn" data-choice="1">Happy</button>
+                                <button class="jspsych-btn sad-btn" data-choice="2">Sad</button>
+                                <button class="jspsych-btn angry-btn" data-choice="3">Angry</button>
+                                <button class="jspsych-btn fearful-btn" data-choice="4">Fearful</button>
+                                <div class="skip-btn-container">
+                                    <button class="jspsych-btn skip-btn" data-choice="skip">Continue without answering</button>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    choices: "NO_KEYS",
+                    trial_duration: null,
+                    response_ends_trial: true,
+                    on_load: function() {
+                        document.querySelectorAll('.button-grid button').forEach(button => {
+                            button.addEventListener('click', function() {
+                                const choice = this.getAttribute('data-choice');
+                                const rt = performance.now() - trialStartTime;
+                                trialDict[trialIndex].response = choice === 'skip' ? null : choice;
+                                trialDict[trialIndex].rt = rt;
+                                trialDict[trialIndex].timestamp = new Date().toISOString();
+                                jsPsych.finishTrial();
+                            });
+                        });
+                    }
+                };
+            }
+
+            // Fixation cross trial
+            const fixation = {
+                type: htmlKeyboardResponse,
+                stimulus: '<div class="fixation-cross">+</div>',
+                choices: "NO_KEYS",
+                trial_duration: 1000
+            };
+
+            // Create continue button trial
+            function createContinueTrial(text) {
+                return {
+                    type: htmlKeyboardResponse,
+                    stimulus: `
+                        <div class="consent-container">
+                            ${text}
+                            <button class="jspsych-btn jspsych-btn-continue">Continue</button>
+                        </div>
+                    `,
+                    choices: "NO_KEYS",
+                    response_ends_trial: false,
+                    trial_duration: null,
+                    on_load: function() {
+                        document.querySelector('.jspsych-btn-continue').addEventListener('click', function() {
+                            jsPsych.finishTrial();
+                        }, { once: true });
+                    }
+                };
+            }
+
+            // Results screen
+            const results = {
+                type: htmlKeyboardResponse,
+                stimulus: `
+                    <div class="consent-container" style="text-align: center;">
+                        <h2>Test Complete</h2>
+                        <p>Thank you for participating!</p>
+                        <p>Your results have been downloaded.</p>
+                    </div>
+                `,
+                choices: "NO_KEYS",
+                trial_duration: 10
+            };
+
+            // Initialize and run experiment
+            function initExperiment() {
+                const imageUrls = initializeStimuli();
+                
+                // Preload all images first
+                const preloadTrial = {
+                    type: preload,
+                    images: imageUrls,
+                    message: 'Loading images...',
+                    error_message: 'Failed to load some images. Please refresh to try again.',
+                    show_progress_bar: true
+                };
+
+                // Build main trial timeline
+                const trials = [];
+                for (let i = 0; i < 24; i++) {
+                    trials.push(fixation); // Fixation before each image
+                    trials.push(createImageDisplayTrial(i));
+                    trials.push(createResponseTrial(i));
+                }
+                
+                const timeline = [
+                    createContinueTrial(`
+                        <h2>Informed Consent</h2>
+                        <p>By participating in this study, you agree to the following:</p>
+                        <ul>
+                            <li>You are at least 18 years old</li>
+                            <li>Your participation is voluntary</li>
+                            <li>Your responses will be kept confidential</li>
+                        </ul>
+                        <p>Click Continue to proceed</p>
+                    `),
+                    {
+                        type: surveyText,
+                        preamble: `<div class="consent-container"><h2>Demographics</h2>
+                                    <p>Your randomly generated ID: <strong>${participantId}</strong></p>
+                                    <p>You may override this ID below if needed:</p></div>`,
+                        questions: [
+                            {prompt: 'Participant ID:', name: 'participantId', required: false, placeholder: 'Leave blank to keep random ID'},
+                            {prompt: 'Age:', name: 'age', required: true},
+                            {prompt: 'Gender:', name: 'gender', required: true},
+                            {prompt: 'Session:', name: 'session', required: true, value: '001'}
+                        ],
+                        on_finish: function(data) {
+                            // Only update participantId if a value was provided
+                            if (data.response.participantId && data.response.participantId.trim() !== '') {
+                                participantId = data.response.participantId.trim();
+                            }
+                            age = data.response.age;
+                            session = data.response.session;
+                        }
+                    },
+                    createContinueTrial(`
+                        <h2>Instructions</h2>
+                        <p>View each face and select the emotion:</p>
+                        <div class="button-container">
+                            <div class="button-grid">
+                                <button class="jspsych-btn happy-btn">Happy</button>
+                                <button class="jspsych-btn sad-btn">Sad</button>
+                                <button class="jspsych-btn angry-btn">Angry</button>
+                                <button class="jspsych-btn fearful-btn">Fearful</button>
+                                <div class="skip-btn-container">
+                                    <button class="jspsych-btn skip-btn">Continue without answering</button>
+                                </div>
+                            </div>
+                        </div>
+                        <p>Click Continue to begin</p>
+                    `),
+                    preloadTrial,
+                    ...trials,
+                    results
+                ];
+
+                jsPsych.run(timeline);
+            }
+
+            initExperiment();
+        });
+    </script>
+</body>
+</html>
