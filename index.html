@@ -47,8 +47,10 @@
 <body>
   <div class="box">
     <h1>Before You Begin</h1>
-    <p>This test requires access to <strong>cookies</strong> and <strong>local storage</strong> in your browser to save your results.</p>
-    <p>Please click the button below to confirm permission.</p>
+    <p>This test requires access to <strong>cookies</strong> 
+      <!-- and <strong>local storage</strong>  -->
+      in your browser to save your results.</p>
+    <p>To continue, you must consent to cookies being used to temporarily store the results.  Please click the button below to confirm permission.</p>
     <button onclick="checkPermissions()">Check and Continue</button>
     <div id="status"></div>
   </div>
@@ -75,13 +77,13 @@
         document.cookie = "danva_cookie_check=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         
         // Show success message briefly before redirect
-        statusEl.innerHTML = '<span class="success">✓ All checks passed. Redirecting...</span>';
+        statusEl.innerHTML = '<span class="success">All checks passed. Redirecting...</span>';
         setTimeout(() => {
           window.location.href = "danva.html";
         }, 1000);
         
       } catch (e) {
-        statusEl.innerHTML = `<span class="error">❌ Permission check failed: ${e.message}<br><br>
+        statusEl.innerHTML = `<span class="error">Permission check failed: ${e.message}<br><br>
           Please enable:<br>
           - Local storage<br>
           - Cookies<br>
